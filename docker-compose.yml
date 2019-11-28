@@ -11,6 +11,17 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  fake:
+    container_name: fakeservice
+    build: ./picart-fake-service
+    ports:
+      - 3000:3000
+    labels:
+      - "traefik.backend=fakeservice"
+      - "traefik.port=3000"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.backend.healthcheck.path=/service/health"
+
   files:
     container_name: files
     build: ./picart-files-service
