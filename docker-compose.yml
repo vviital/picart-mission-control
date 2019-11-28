@@ -29,6 +29,11 @@ services:
       - MONGODB_URL=mongodb://mongo:27017/images
     depends_on:
       - mongo
+    labels:
+      - "traefik.backend=images"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/images;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/service/health"
 
   profiles:
     container_name: profiles
