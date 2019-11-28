@@ -1,0 +1,12 @@
+[submodule "picart-files-service"]
+	path = picart-files-service
+	url = git@github.com:vviital/picart-files-service.git
+[submodule "picart-fake-service"]
+	path = picart-fake-service
+	url = git@github.com:vviital/picart-fake-service.git
+[submodule "picart-profiles-service"]
+	path = picart-profiles-service
+	url = git@github.com:vviital/picart-profiles-service.git
+[submodule "picart-spectum-visualizator"]
+	path = picart-spectum-visualizator
+	url = git@github.com:vviital/picart-spectum-visualizator.git
