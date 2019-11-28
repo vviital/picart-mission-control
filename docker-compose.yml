@@ -20,6 +20,11 @@ services:
       - TOKEN_SECRET=secret
     depends_on:
       - mongo
+    labels:
+      - "traefik.backend=files"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/files,/api/v1/chunks;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/service/health"
 
   images:
     container_name: images
@@ -52,6 +57,20 @@ services:
       - "traefik.frontend.rule=PathPrefix:/api/v1/profiles,/api/v1/tokens;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
+
+  visualizator:
+    container_name: visualizator
+    build: ./picart-spectum-visualizator
+    depends_on:
+      - profiles
+      - images
+      - files
+    labels:
+      - "traefik.backend=visualizator"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=PathPrefix:/"
+      - "traefik.frontend.priority=1"
+      - "traefik.backend.healthcheck.path=/"
 
   #databases
     
