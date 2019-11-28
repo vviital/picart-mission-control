@@ -10,3 +10,6 @@
 [submodule "picart-spectum-visualizator"]
 	path = picart-spectum-visualizator
 	url = git@github.com:vviital/picart-spectum-visualizator.git
+[submodule "picart-images-service"]
+	path = picart-images-service
+	url = git@github.com:vviital/picart-images-service.git
