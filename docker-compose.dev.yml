@@ -71,14 +71,18 @@ services:
 
   visualizator:
     container_name: visualizator
-    build: ./picart-spectum-visualizator
+    build:
+      context: ../picart-spectum-visualizator
+      dockerfile: Dockerfile.dev
     depends_on:
       - profiles
       - images
       - files
+    volumes:
+      - ../picart-spectum-visualizator:/home/app
     labels:
       - "traefik.backend=visualizator"
-      - "traefik.port=80"
+      - "traefik.port=3000"
       - "traefik.frontend.rule=PathPrefix:/"
       - "traefik.frontend.priority=1"
       - "traefik.backend.healthcheck.path=/"
