@@ -13,3 +13,6 @@
 [submodule "picart-images-service"]
 	path = picart-images-service
 	url = git@github.com:vviital/picart-images-service.git
+[submodule "zaidel"]
+	path = zaidel
+	url = git@github.com:vviital/zaidel.git

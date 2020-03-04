@@ -10,6 +10,13 @@ services:
       - "8080:8080" # The Web UI (enabled by --api)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - fake
+      - files
+      - images
+      - profiles
+      - visualizator
+      - zaidel
 
   fake:
     container_name: fakeservice
@@ -82,6 +89,19 @@ services:
       - "traefik.frontend.rule=PathPrefix:/"
       - "traefik.frontend.priority=1"
       - "traefik.backend.healthcheck.path=/"
+
+  zaidel:
+    container_name: zaidel-analyzer
+    build: ./zaidel
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+    depends_on:
+     - mongo
+    labels:
+      - "traefik.backend=zaidel-analyzer"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/zaidel-analyzer;ReplacePathRegex:^/api/v1/zaidel-analyzer/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/peaks/settings"
 
   #databases
   mongo:

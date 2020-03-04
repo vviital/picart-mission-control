@@ -10,6 +10,13 @@ services:
       - "8080:8080" # The Web UI (enabled by --api)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - fake
+      - files
+      - images
+      - profiles
+      - visualizator
+      - zaidel
 
   fake:
     container_name: fakeservice
@@ -36,6 +43,7 @@ services:
       - "traefik.frontend.rule=PathPrefix:/api/v1/files,/api/v1/chunks;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
+    command: bash -c "yarn start:watch"
 
   images:
     container_name: images
@@ -50,6 +58,7 @@ services:
       - "traefik.frontend.rule=PathPrefix:/api/v1/images;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
+    command: yarn run dev
 
   profiles:
     container_name: profiles
@@ -68,6 +77,7 @@ services:
       - "traefik.frontend.rule=PathPrefix:/api/v1/profiles,/api/v1/tokens;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
+    command: bash -c "yarn start:watch"
 
   visualizator:
     container_name: visualizator
@@ -86,6 +96,19 @@ services:
       - "traefik.frontend.rule=PathPrefix:/"
       - "traefik.frontend.priority=1"
       - "traefik.backend.healthcheck.path=/"
+
+  zaidel:
+    container_name: zaidel-analyzer
+    build: "${GO_PROJECTS_PATH}/zaidel"
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+    depends_on:
+     - mongo
+    labels:
+      - "traefik.backend=zaidel-analyzer"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/zaidel-analyzer;ReplacePathRegex:^/api/v1/zaidel-analyzer/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/peaks/settings"
 
   #databases
   mongo:
