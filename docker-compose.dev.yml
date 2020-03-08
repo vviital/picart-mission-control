@@ -20,24 +20,27 @@ services:
 
   fake:
     container_name: fakeservice
-    build: ./picart-fake-service
+    build: ../picart-fake-service
     ports:
       - 3000:3000
+    volumes:
+      - ../picart-fake-service:/home/app
     labels:
       - "traefik.backend=fakeservice"
       - "traefik.port=3000"
-      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.backend.healthcheck.path=/service/health"
 
   files:
     container_name: files
-    build: ./picart-files-service
+    build: ../picart-files-service
     environment:
       - MONGODB_URL=mongodb://mongo:27017/files
       - PORT=3000
       - TOKEN_SECRET=secret
     depends_on:
       - mongo
+    volumes:
+      - ../picart-files-service:/home/app
     labels:
       - "traefik.backend=files"
       - "traefik.frontend.rule=PathPrefix:/api/v1/files,/api/v1/chunks;ReplacePathRegex:^/api/v1/(.*) /$$1"
@@ -47,12 +50,14 @@ services:
 
   images:
     container_name: images
-    build: ./picart-images-service
+    build: ../picart-images-service
     environment:
       - PORT=3000
       - MONGODB_URL=mongodb://mongo:27017/images
     depends_on:
       - mongo
+    volumes:
+      - ../picart-images-service:/home/app
     labels:
       - "traefik.backend=images"
       - "traefik.frontend.rule=PathPrefix:/api/v1/images;ReplacePathRegex:^/api/v1/(.*) /$$1"
@@ -62,7 +67,7 @@ services:
 
   profiles:
     container_name: profiles
-    build: ./picart-profiles-service
+    build: ../picart-profiles-service
     environment:
       - MONGODB_URL=mongodb://mongo:27017/profiles
       - PORT=3000
@@ -72,9 +77,29 @@ services:
       - SENDER_EMAIL_PASSWORD
     depends_on:
       - mongo
+    volumes:
+      - ../picart-profiles-service:/home/app
     labels:
       - "traefik.backend=profiles"
       - "traefik.frontend.rule=PathPrefix:/api/v1/profiles,/api/v1/tokens;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/service/health"
+    command: bash -c "yarn start:watch"
+
+  researches:
+    container_name: researches
+    build: ../picart-researches-service
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017/researches
+      - PORT=3000
+      - TOKEN_SECRET=secret
+    depends_on:
+      - mongo
+    volumes:
+      - ../picart-researches-service:/home/app
+    labels:
+      - "traefik.backend=researches"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
     command: bash -c "yarn start:watch"

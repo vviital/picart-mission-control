@@ -26,7 +26,6 @@ services:
     labels:
       - "traefik.backend=fakeservice"
       - "traefik.port=3000"
-      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.backend.healthcheck.path=/service/health"
 
   files:
@@ -73,6 +72,21 @@ services:
     labels:
       - "traefik.backend=profiles"
       - "traefik.frontend.rule=PathPrefix:/api/v1/profiles,/api/v1/tokens;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.port=3000"
+      - "traefik.backend.healthcheck.path=/service/health"
+
+  researches:
+    container_name: researches
+    build: ./picart-researches-service
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017/researches
+      - PORT=3000
+      - TOKEN_SECRET=secret
+    depends_on:
+      - mongo
+    labels:
+      - "traefik.backend=researches"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
 

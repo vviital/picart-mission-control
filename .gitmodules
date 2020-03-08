@@ -16,3 +16,6 @@
 [submodule "zaidel"]
 	path = zaidel
 	url = git@github.com:vviital/zaidel.git
+[submodule "picart-researches-service"]
+	path = picart-researches-service
+	url = git@github.com:vviital/picart-researches-service.git
