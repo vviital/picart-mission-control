@@ -11,22 +11,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
-      - fake
       - files
       - images
       - profiles
       - visualizator
       - zaidel
-
-  fake:
-    container_name: fakeservice
-    build: ./picart-fake-service
-    ports:
-      - 3000:3000
-    labels:
-      - "traefik.backend=fakeservice"
-      - "traefik.port=3000"
-      - "traefik.backend.healthcheck.path=/service/health"
 
   files:
     container_name: files
@@ -82,11 +71,12 @@ services:
       - MONGODB_URL=mongodb://mongo:27017/researches
       - PORT=3000
       - TOKEN_SECRET=secret
+      - ZAIDEL_SERVICE_URL=http://zaidel:3000
     depends_on:
       - mongo
     labels:
       - "traefik.backend=researches"
-      - "traefik.frontend.rule=PathPrefix:/api/v1/researches;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/researches,/api/v1/experiments;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
 
@@ -109,6 +99,7 @@ services:
     build: ./zaidel
     environment:
       - MONGODB_URL=mongodb://mongo:27017
+      - FILES_SERVICE_URL=http://files:3000
     depends_on:
      - mongo
     labels:
