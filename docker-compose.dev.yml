@@ -87,7 +87,7 @@ services:
       - ../picart-researches-service:/home/app
     labels:
       - "traefik.backend=researches"
-      - "traefik.frontend.rule=PathPrefix:/api/v1/researches,/api/v1/experiments;ReplacePathRegex:^/api/v1/(.*) /$$1"
+      - "traefik.frontend.rule=PathPrefix:/api/v1/researches,/api/v1/experiments,/api/v1/comparisons;ReplacePathRegex:^/api/v1/(.*) /$$1"
       - "traefik.port=3000"
       - "traefik.backend.healthcheck.path=/service/health"
     command: bash -c "yarn start:watch"
@@ -116,6 +116,7 @@ services:
     environment:
       - MONGODB_URL=mongodb://mongo:27017
       - FILES_SERVICE_URL=http://files:3000
+      - RESEARCH_SERVICE_URL=http://researches:3000
     depends_on:
      - mongo
     labels:
