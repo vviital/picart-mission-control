@@ -43,8 +43,8 @@ services:
       - MONGODB_URL=mongodb://mongo:27017/images
     depends_on:
       - mongo
-    volumes:
-      - ../picart-images-service:/home/app
+    # volumes:
+    #   - ../picart-images-service:/home/app
     labels:
       - "traefik.backend=images"
       - "traefik.frontend.rule=PathPrefix:/api/v1/images;ReplacePathRegex:^/api/v1/(.*) /$$1"
